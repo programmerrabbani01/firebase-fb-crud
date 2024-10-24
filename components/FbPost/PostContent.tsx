@@ -6,23 +6,27 @@ import myImage from "@/public/my.jpg";
 import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import { getAllPostsRealTime, getDeleteAPost } from "@/firebase/models.js";
 import Swal from "sweetalert2";
+import EditPost from "./EditPost.tsx";
+import { getRelativeTime } from "../RelativeTime/RelativeTime.tsx";
+import { Timestamp } from "firebase/firestore";
 
 // Define the shape of a post
 interface Post {
   id: string;
   content: string;
   photo?: string;
+  createdAt?: Timestamp;
 }
 
 export default function PostContent() {
   const [showMenu, setShowMenu] = useState(false);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null); // For the post being edited
+  const [showModal, setShowModal] = useState(false);
 
+  // drop down menu click event handler
   const toggleMenu = () => {
     setShowMenu(!showMenu);
-  };
-
-  const handleEditPost = () => {
-    console.log("Edit Post clicked");
   };
 
   // delete a post from firebase and remove from UI
@@ -52,10 +56,6 @@ export default function PostContent() {
     }
   };
 
-  // states
-
-  const [posts, setPosts] = useState<Post[]>([]);
-
   //   get all posts data
 
   const getAllPostsData = async () => {
@@ -66,10 +66,32 @@ export default function PostContent() {
     getAllPostsData();
   }, []);
 
+  // Toggles the modal
+
+  const toggleEditModal = () => setShowModal(!showModal);
+
+  // Function to open the modal with the post data
+  const editPost = (post: Post) => {
+    setSelectedPost(post);
+    setShowModal(true);
+    setShowMenu(false);
+  };
+
   return (
     <>
       {posts?.length > 0 ? (
         posts.map((post) => {
+          // const createdAt = post.createdAt?.toDate();
+          const createdAt = post.createdAt
+            ? post.createdAt instanceof Timestamp
+              ? post.createdAt.toDate() // Convert Firestore Timestamp to Date
+              : post.createdAt // Fallback if it's already a Date
+            : null;
+
+          const relativeTime = createdAt
+            ? getRelativeTime(createdAt)
+            : "Just now"; // Fallback for null
+
           return (
             <div
               key={post.id}
@@ -85,7 +107,7 @@ export default function PostContent() {
                     />
                     <div>
                       <p className="text-sm font-medium">Programmer Rabbani</p>
-                      <p className="text-xs text-gray-500">2 days ago</p>
+                      <p className="text-xs text-gray-500">{relativeTime}</p>
                     </div>
                   </div>
 
@@ -105,7 +127,7 @@ export default function PostContent() {
                       >
                         <ul className="py-2">
                           <li
-                            onClick={handleEditPost}
+                            onClick={() => editPost(post)}
                             className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
                           >
                             <IconPencil stroke={2} className="w-5 h-5" />
@@ -213,6 +235,16 @@ export default function PostContent() {
         <div className="max-w-lg mx-auto my-6">
           <h3>Loading . . . . </h3>
         </div>
+      )}
+
+      {/* Modal Popup */}
+      {/* Render EditPost modal if showModal is true */}
+      {showModal && (
+        <EditPost
+          toggleEditModal={toggleEditModal}
+          post={selectedPost}
+          setPosts={setPosts}
+        />
       )}
     </>
   );

@@ -8,16 +8,33 @@ import photoVideo from "@/public/photoVideo.png";
 import tag from "@/public/tag.png";
 import check from "@/public/check.png";
 import live from "@/public/live.png";
-import { createAPost } from "@/firebase/models";
-import { serverTimestamp } from "firebase/firestore";
-import { uploadFileToStorage } from "@/firebase/fileData";
+import Swal from "sweetalert2";
+import { updateAPost } from "@/firebase/models.js";
+import {
+  deleteFileFromStorage,
+  uploadFileToStorage,
+} from "@/firebase/fileData.js";
 
-// Define the type for the toggleModal prop
-interface PostPopUpProps {
-  toggleModal: () => void;
+// Define the Post type
+interface Post {
+  id: string;
+  content: string;
+  photo?: string; // Photo is optional
+  // Add other fields if necessary, e.g., author, timestamp, etc.
 }
 
-export default function PostPopUp({ toggleModal }: PostPopUpProps) {
+// Define the type for the post and toggleModal props
+interface EditPostProps {
+  toggleEditModal: () => void;
+  post: Post | null; // Post object passed from parent
+  setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
+}
+
+export default function EditPost({
+  toggleEditModal,
+  post,
+  setPosts,
+}: EditPostProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Close modal if clicking outside of it
@@ -27,21 +44,23 @@ export default function PostPopUp({ toggleModal }: PostPopUpProps) {
         modalRef.current &&
         !modalRef.current.contains(event.target as Node)
       ) {
-        toggleModal();
+        toggleEditModal();
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [toggleModal]);
+  }, [toggleEditModal]);
 
-  // states
+  // States for managing content and file
   const [input, setInput] = useState({
-    content: "",
+    content: post?.content || "", // Initialize with existing content
   });
   const [file, setFile] = useState<File | null>(null);
-  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(
+    post?.photo || null // Initialize with existing photo
+  );
 
   // Input value changes
   const handleInputChange = (
@@ -51,42 +70,6 @@ export default function PostPopUp({ toggleModal }: PostPopUpProps) {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-  };
-
-  // Submit form
-  const handleFormCreate = async () => {
-    if (!file) {
-      // Handle the case where no file is selected (optional)
-      console.warn("No file selected");
-      return; // Or show an error message
-    }
-
-    try {
-      const fileLink = await uploadFileToStorage(file); // Ensure `uploadFile` accepts a `File`
-
-      // create a post
-      await createAPost("posts", {
-        ...input,
-        status: true,
-        trash: false,
-        createdAt: serverTimestamp(),
-        updatedAt: null,
-        photo: fileLink,
-      });
-
-      // Reset form
-      setInput({
-        content: "",
-      });
-      setFile(null);
-      setFilePreview(null);
-
-      // Close the modal after successful submission
-      toggleModal();
-    } catch (error) {
-      console.error("Error creating post:", error);
-      // Optionally handle the error, e.g., show a notification
-    }
   };
 
   // For photo upload
@@ -108,6 +91,57 @@ export default function PostPopUp({ toggleModal }: PostPopUpProps) {
     setFilePreview(null);
   };
 
+  // Handle saving the updated post
+
+  const handleUpdatePost = async () => {
+    try {
+      let newFileUrl = post?.photo || null; // Start with existing photo
+
+      // If a new file is uploaded, handle the file upload
+      if (file) {
+        // If there was a previous photo, delete it
+        if (post?.photo) {
+          await deleteFileFromStorage(post.photo); // Delete the old file from Firebase Storage
+        }
+
+        // Upload the new file
+        newFileUrl = await uploadFileToStorage(file); // Upload the new file and get the URL
+      }
+
+      // Prepare updated data
+      const updatedData: Post = {
+        id: post?.id as string, // Ensure the id is always a string
+        content: input.content,
+        photo: newFileUrl ?? undefined, // Ensure that photo is either a string or undefined
+      };
+
+      // Update the post in Firestore
+      await updateAPost("posts", post?.id, updatedData);
+
+      // Update the UI with new post content
+      setPosts((prevPosts) =>
+        prevPosts.map((p) => (p.id === post?.id ? { ...p, ...updatedData } : p))
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Updated!",
+        text: "The post has been updated successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      toggleEditModal(); // Close the modal after saving
+    } catch (error) {
+      console.error("Error updating post:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error!",
+        text: "Something went wrong while updating the post.",
+      });
+    }
+  };
+
   return (
     <>
       <div className="relative">
@@ -119,7 +153,7 @@ export default function PostPopUp({ toggleModal }: PostPopUpProps) {
             {/* Close button */}
             <div
               className="absolute cursor-pointer  top-2 right-2 text-gray-400 hover:text-gray-600"
-              onClick={toggleModal}
+              onClick={toggleEditModal}
             >
               <IconX
                 stroke={2}
@@ -217,9 +251,9 @@ export default function PostPopUp({ toggleModal }: PostPopUpProps) {
             <div className="mt-4">
               <button
                 className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
-                onClick={handleFormCreate}
+                onClick={handleUpdatePost}
               >
-                Post
+                Save
               </button>
             </div>
           </div>
