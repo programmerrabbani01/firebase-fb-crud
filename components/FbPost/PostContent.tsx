@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import myImage from "@/public/my.jpg";
 import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import { getAllPostsRealTime, getDeleteAPost } from "@/firebase/models.js";
+import Swal from "sweetalert2";
 
 // Define the shape of a post
 interface Post {
@@ -24,13 +25,30 @@ export default function PostContent() {
     console.log("Edit Post clicked");
   };
 
+  // delete a post from firebase and remove from UI
   const handleMoveToTrash = async (id: string) => {
     try {
       await getDeleteAPost("posts", id); // Call the delete function
       setPosts(posts.filter((post) => post.id !== id)); // Remove from UI
-      console.log("Post deleted successfully");
+      setShowMenu(false); // Close the menu after deletion
+
+      // Show SweetAlert success message
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "The post has been deleted successfully.",
+        timer: 2000, // Auto-close after 2 seconds
+        showConfirmButton: false,
+      });
     } catch (error) {
       console.error("Error deleting post:", error);
+
+      // Show SweetAlert error message if deletion fails
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong! Could not delete the post.",
+      });
     }
   };
 

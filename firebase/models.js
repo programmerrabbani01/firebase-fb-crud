@@ -71,11 +71,13 @@ export const getASinglePost = async (colName, id) => {
  */
 
 export const getDeleteAPost = async (colName, id) => {
-  // delete a single post data
-  const deleteAPost = await deleteDoc(doc(database, colName, id));
+  // // delete a single post data
+  // const deleteAPost = await deleteDoc(doc(database, colName, id));
 
-  //   return post data
-  return deleteAPost.data();
+  // //   return post data
+  // return deleteAPost.data();
+  const docRef = doc(database, colName, id);
+  await deleteDoc(docRef);
 };
 
 /**
