@@ -1,13 +1,16 @@
 "use client";
 
-import Image from "next/image.js";
-import React, { useEffect, useRef } from "react";
+import Image from "next/image";
+import React, { useEffect, useRef, useState } from "react";
 import myImage from "@/public/my.jpg";
 import { IconX } from "@tabler/icons-react";
 import photoVideo from "@/public/photoVideo.png";
 import tag from "@/public/tag.png";
 import check from "@/public/check.png";
 import live from "@/public/live.png";
+import { createAPost } from "@/firebase/models";
+import { serverTimestamp } from "firebase/firestore";
+import { uploadFile } from "@/firebase/fileData";
 
 // Define the type for the toggleModal prop
 interface PostPopUpProps {
@@ -32,6 +35,67 @@ export default function PostPopUp({ toggleModal }: PostPopUpProps) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [toggleModal]);
+
+  // states
+  const [input, setInput] = useState({
+    content: "",
+  });
+  const [file, setFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+
+  // Input value changes
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setInput((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  // Submit form
+  const handleFormCreate = async () => {
+    const fileLink = await uploadFile(file);
+
+    // create a post
+    await createAPost("posts", {
+      ...input,
+      status: true,
+      trash: false,
+      createdAt: serverTimestamp(),
+      updatedAt: null,
+      photo: fileLink,
+    });
+
+    // Reset form
+    setInput({
+      content: "",
+    });
+    setFile(null);
+    setFilePreview(null);
+
+    // Close the modal after successful submission
+    toggleModal();
+  };
+
+  // For photo upload
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      setFilePreview(URL.createObjectURL(selectedFile));
+    }
+  };
+
+  const handleButtonClick = () => {
+    document.getElementById("fileInput")?.click();
+  };
+
+  // Cancel selected file
+  const cancelFile = () => {
+    setFile(null);
+    setFilePreview(null);
+  };
 
   return (
     <>
@@ -73,22 +137,56 @@ export default function PostPopUp({ toggleModal }: PostPopUpProps) {
                 className="w-full p-2 bg-gray-100 rounded-lg focus:outline-none"
                 rows={4}
                 placeholder="What's on your mind, Programmer?"
+                name="content"
+                value={input.content}
+                onChange={handleInputChange}
               ></textarea>
             </div>
+
+            {/* File preview */}
+            {filePreview && (
+              <div className="mt-4">
+                <img
+                  src={filePreview}
+                  alt="Preview"
+                  className="w-full h-64 object-cover rounded-lg"
+                />
+                <button
+                  onClick={cancelFile}
+                  className="mt-2 text-red-500 hover:text-red-700"
+                >
+                  Cancel file
+                </button>
+              </div>
+            )}
 
             {/* Add to your post section */}
             <div className="mt-4 border rounded-lg p-2">
               <p className="text-gray-600 text-sm mb-2">Add to your post</p>
               <div className="flex justify-around">
-                <button className="flex items-center space-x-2 text-gray-600">
-                  <Image
-                    src={photoVideo}
-                    alt="photoVideo"
-                    width={24}
-                    height={24}
+                <div>
+                  <button
+                    type="button"
+                    className="flex items-center space-x-2 text-gray-600"
+                    onClick={handleButtonClick}
+                  >
+                    <Image
+                      src={photoVideo}
+                      alt="photoVideo"
+                      width={24}
+                      height={24}
+                    />
+                    <span>Photo/Video</span>
+                  </button>
+
+                  {/* Hidden file input */}
+                  <input
+                    type="file"
+                    id="fileInput"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
                   />
-                  <span>Photo/Video</span>
-                </button>
+                </div>
                 <button className="flex items-center space-x-2 text-gray-600">
                   <Image src={tag} alt="tag" width={24} height={24} />
                   <span>Tag Friends</span>
@@ -106,7 +204,10 @@ export default function PostPopUp({ toggleModal }: PostPopUpProps) {
 
             {/* Post button */}
             <div className="mt-4">
-              <button className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600">
+              <button
+                className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
+                onClick={handleFormCreate}
+              >
                 Post
               </button>
             </div>
