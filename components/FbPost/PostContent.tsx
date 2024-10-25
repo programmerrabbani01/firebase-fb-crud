@@ -4,11 +4,11 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import myImage from "@/public/my.jpg";
 import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
-import { getAllPostsRealTime, getDeleteAPost } from "@/firebase/models.js";
 import Swal from "sweetalert2";
 import EditPost from "./EditPost.tsx";
 import { getRelativeTime } from "../RelativeTime/RelativeTime.tsx";
 import { Timestamp } from "firebase/firestore";
+import { getAllPostsRealTime, getDeleteAPost } from "@/firebase/models.ts";
 
 // Define the shape of a post
 interface Post {

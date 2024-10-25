@@ -8,7 +8,7 @@ import photoVideo from "@/public/photoVideo.png";
 import tag from "@/public/tag.png";
 import check from "@/public/check.png";
 import live from "@/public/live.png";
-import { createAPost } from "@/firebase/models";
+import { createAPost } from "@/firebase/models.ts";
 import { serverTimestamp } from "firebase/firestore";
 import { uploadFileToStorage } from "@/firebase/fileData.js";
 

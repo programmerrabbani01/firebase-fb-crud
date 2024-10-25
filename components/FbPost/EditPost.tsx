@@ -9,7 +9,7 @@ import tag from "@/public/tag.png";
 import check from "@/public/check.png";
 import live from "@/public/live.png";
 import Swal from "sweetalert2";
-import { updateAPost } from "@/firebase/models.js";
+import { updateAPost } from "@/firebase/models.ts";
 import {
   deleteFileFromStorage,
   uploadFileToStorage,

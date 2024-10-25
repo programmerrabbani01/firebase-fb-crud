@@ -14,6 +14,15 @@ import {
 } from "firebase/firestore";
 import { getStorage, ref, deleteObject } from "firebase/storage";
 import { fireBaseApp } from "./app.js";
+// Define the shape of a post
+import { Timestamp } from "firebase/firestore"; // Import the Timestamp type from Firestore
+
+export interface Post {
+  id: string; // Post ID
+  content: string; // Content of the post
+  photo?: string; // Optional property for the image path
+  createdAt?: Timestamp; // Optional property for the creation date
+}
 
 // create fireStore database
 
@@ -23,16 +32,16 @@ const database = getFirestore(fireBaseApp);
  * Get All Post Data From FireStore Database
  */
 
-export const getAllPosts = async (colName) => {
+export const getAllPosts = async (colName: string): Promise<Post[]> => {
   // get all posts data
   const posts = await getDocs(collection(database, colName));
 
   // process posts data
 
-  const postsDataList = [];
+  const postsDataList: Post[] = [];
 
   posts.forEach((post) => {
-    postsDataList.push({ ...post.data(), id: post.id });
+    postsDataList.push({ ...post.data(), id: post.id } as Post);
   });
 
   return postsDataList;
@@ -42,13 +51,16 @@ export const getAllPosts = async (colName) => {
  * Realtime Data Get
  */
 
-export const getAllPostsRealTime = async (colName, updateState) => {
+export const getAllPostsRealTime = async (
+  colName: string,
+  updateState: (posts: Post[]) => void
+) => {
   onSnapshot(
     query(collection(database, colName), orderBy("createdAt", "desc")),
     (snapShot) => {
-      const postsDataList = [];
+      const postsDataList: Post[] = [];
       snapShot.docs.forEach((post) => {
-        postsDataList.push({ ...post.data(), id: post.id });
+        postsDataList.push({ ...post.data(), id: post.id } as Post);
       });
       updateState(postsDataList);
     }
@@ -59,12 +71,15 @@ export const getAllPostsRealTime = async (colName, updateState) => {
  * Get A Single Post Data From FireStore Database
  */
 
-export const getASinglePost = async (colName, id) => {
-  // get a single post data
+export const getASinglePost = async (
+  colName: string,
+  id: string
+): Promise<Post | undefined> => {
+  // Get a single post data
   const post = await getDoc(doc(database, colName, id));
 
-  //   return post data
-  return post.data();
+  // Return post data
+  return post.data() as Post; // Cast to Post type
 };
 
 /**
@@ -73,9 +88,9 @@ export const getASinglePost = async (colName, id) => {
  */
 
 export const getDeleteAPost = async (
-  colName,
-  id,
-  imagePath = string | null
+  colName: string,
+  id: string,
+  imagePath?: string | null // Allow for undefined as well
 ) => {
   const docRef = doc(database, colName, id);
 
@@ -102,9 +117,12 @@ export const getDeleteAPost = async (
  * otherwise create with autoId
  */
 
-export const createAPost = async (colName, data, docId = null) => {
-  // create a new Post
-
+export const createAPost = async (
+  colName: string,
+  data: Post,
+  docId: string | null = null
+) => {
+  // Create a new Post
   if (docId) {
     await setDoc(doc(database, colName, docId), data);
   } else {
@@ -116,7 +134,11 @@ export const createAPost = async (colName, data, docId = null) => {
  * Update A Post Data For FireStore Database
  */
 
-export const updateAPost = async (colName, id, data) => {
-  // update a post
+export const updateAPost = async (
+  colName: string,
+  id: string,
+  data: Partial<Post>
+) => {
+  // Update a post
   await updateDoc(doc(database, colName, id), data);
 };
