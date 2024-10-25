@@ -236,7 +236,9 @@ export default function PostContent() {
         })
       ) : (
         <div className="max-w-lg mx-auto my-6">
-          <h3>Loading . . . . </h3>
+          <h3 className="uppercase font-semibold text-center text-xl">
+            No Post Found
+          </h3>
         </div>
       )}
 
