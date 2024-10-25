@@ -7,7 +7,7 @@ import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import Swal from "sweetalert2";
 import EditPost from "./EditPost.tsx";
 import { getRelativeTime } from "../RelativeTime/RelativeTime.tsx";
-import { Timestamp } from "firebase/firestore";
+import { FieldValue, Timestamp } from "firebase/firestore";
 import { getAllPostsRealTime, getDeleteAPost } from "@/firebase/models.ts";
 
 // Define the shape of a post
@@ -15,7 +15,7 @@ interface Post {
   id: string;
   content: string;
   photo?: string;
-  createdAt?: Timestamp;
+  createdAt?: Timestamp | FieldValue | null; // Allow FieldValue and null
 }
 
 export default function PostContent() {
@@ -86,12 +86,13 @@ export default function PostContent() {
           const createdAt = post.createdAt
             ? post.createdAt instanceof Timestamp
               ? post.createdAt.toDate() // Convert Firestore Timestamp to Date
-              : post.createdAt // Fallback if it's already a Date
+              : post.createdAt instanceof Date // Check if it's already a Date
+              ? post.createdAt
+              : null // Handle the case where it's null or unexpected type
             : null;
 
-          const relativeTime = createdAt
-            ? getRelativeTime(createdAt)
-            : "Just now"; // Fallback for null
+          const relativeTime =
+            createdAt instanceof Date ? getRelativeTime(createdAt) : "Just now"; // Fallback for null
 
           return (
             <div
