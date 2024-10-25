@@ -1,0 +1,66 @@
+[debug] [2024-10-25T11:32:14.932Z] ----------------------------------------------------------------------
+[debug] [2024-10-25T11:32:14.934Z] Command:       /usr/bin/node /usr/bin/firebase deploy --only hosting
+[debug] [2024-10-25T11:32:14.934Z] CLI Version:   13.22.1
+[debug] [2024-10-25T11:32:14.934Z] Platform:      linux
+[debug] [2024-10-25T11:32:14.934Z] Node Version:  v20.18.0
+[debug] [2024-10-25T11:32:14.934Z] Time:          Fri Oct 25 2024 17:32:14 GMT+0600 (Bangladesh Standard Time)
+[debug] [2024-10-25T11:32:14.935Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-10-25T11:32:15.003Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-10-25T11:32:15.003Z] > authorizing via signed-in user (programmerrabbani@gmail.com)
+[debug] [2024-10-25T11:32:15.003Z] [iam] checking project mern-stack-c07bc for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2024-10-25T11:32:15.005Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:15.005Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:15.006Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/mern-stack-c07bc:testIamPermissions [none]
+[debug] [2024-10-25T11:32:15.006Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/mern-stack-c07bc:testIamPermissions x-goog-quota-user=projects/mern-stack-c07bc
+[debug] [2024-10-25T11:32:15.006Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/mern-stack-c07bc:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2024-10-25T11:32:16.815Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/mern-stack-c07bc:testIamPermissions 200
+[debug] [2024-10-25T11:32:16.816Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/mern-stack-c07bc:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2024-10-25T11:32:16.817Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:16.817Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:16.817Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/mern-stack-c07bc [none]
+[debug] [2024-10-25T11:32:17.476Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/mern-stack-c07bc 200
+[debug] [2024-10-25T11:32:17.477Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/mern-stack-c07bc {"projectId":"mern-stack-c07bc","projectNumber":"62200976910","displayName":"MERN STACK","name":"projects/mern-stack-c07bc","resources":{"hostingSite":"mern-stack-c07bc","storageBucket":"mern-stack-c07bc.appspot.com","locationId":"asia-south1"},"state":"ACTIVE","etag":"1_12388353-1c0e-4747-8911-90b3186ab73f"}
+[debug] [2024-10-25T11:32:18.596Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:18.597Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:18.597Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/mern-stack-c07bc/sites pageToken=&pageSize=10
+[debug] [2024-10-25T11:32:20.026Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/mern-stack-c07bc/sites 200
+[debug] [2024-10-25T11:32:20.026Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/mern-stack-c07bc/sites {"sites":[{"name":"projects/mern-stack-c07bc/sites/mern-stack-c07bc","defaultUrl":"https://mern-stack-c07bc.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2024-10-25T11:32:20.029Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:20.029Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:20.029Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/mern-stack-c07bc/sites 
+[debug] [2024-10-25T11:32:20.567Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/mern-stack-c07bc/sites 200
+[debug] [2024-10-25T11:32:20.567Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/mern-stack-c07bc/sites {"sites":[{"name":"projects/mern-stack-c07bc/sites/mern-stack-c07bc","defaultUrl":"https://mern-stack-c07bc.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2024-10-25T11:32:20.569Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:20.569Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:20.570Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/mern-stack-c07bc/webApps/-/config [none]
+[debug] [2024-10-25T11:32:21.903Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/mern-stack-c07bc/webApps/-/config 200
+[debug] [2024-10-25T11:32:21.904Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/mern-stack-c07bc/webApps/-/config {"projectId":"mern-stack-c07bc","storageBucket":"mern-stack-c07bc.appspot.com","locationId":"asia-south1","apiKey":"AIzaSyD3lwlss0ZNbhAZfIpO81ssgmOTnDdPRgc","authDomain":"mern-stack-c07bc.firebaseapp.com","messagingSenderId":"62200976910"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 14.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2024-10-25T11:32:27.492Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:27.492Z] Checked if tokens are valid: true, expires at: 1729859016875
+[debug] [2024-10-25T11:32:27.492Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/mern-stack-c07bc/sites/mern-stack-c07bc [none]
+[debug] [2024-10-25T11:32:28.741Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/mern-stack-c07bc/sites/mern-stack-c07bc 200
+[debug] [2024-10-25T11:32:28.742Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/mern-stack-c07bc/sites/mern-stack-c07bc {"name":"projects/mern-stack-c07bc/sites/mern-stack-c07bc","defaultUrl":"https://mern-stack-c07bc.web.app","type":"DEFAULT_SITE"}
+[info]   ▲ Next.js 14.2.16
+
+[info] 
+
+[info]    Creating an optimized production build ...
+
+[info]  ✓ Compiled successfully
+
+[info]    Linting and checking validity of types ...
+
+[info]  ⨯ ESLint: ESLint configuration in .eslintrc.json is invalid: 	- Unexpected top-level property "eslint-disable-next-line react/prop-types". 
+
