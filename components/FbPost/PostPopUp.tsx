@@ -8,7 +8,7 @@ import photoVideo from "@/public/photoVideo.png";
 import tag from "@/public/tag.png";
 import check from "@/public/check.png";
 import live from "@/public/live.png";
-import { createAPost } from "@/firebase/models.ts";
+import { createAPost, Post } from "@/firebase/models.ts";
 import { serverTimestamp } from "firebase/firestore";
 import { uploadFileToStorage } from "@/firebase/fileData.js";
 
@@ -72,7 +72,7 @@ export default function PostPopUp({ toggleModal }: PostPopUpProps) {
         createdAt: serverTimestamp(),
         updatedAt: null,
         photo: fileLink,
-      });
+      } as Post);
 
       // Reset form
       setInput({

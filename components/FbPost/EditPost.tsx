@@ -118,7 +118,9 @@ export default function EditPost({
       };
 
       // Update the post in Firestore
-      await updateAPost("posts", post?.id, updatedData);
+      if (post?.id) {
+        await updateAPost("posts", post.id, updatedData);
+      }
 
       // Update the UI with new post content
       setPosts((prevPosts) =>

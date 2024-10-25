@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  FieldValue,
   getDoc,
   getDocs,
   getFirestore,
@@ -21,7 +22,10 @@ export interface Post {
   id: string; // Post ID
   content: string; // Content of the post
   photo?: string; // Optional property for the image path
-  createdAt?: Timestamp; // Optional property for the creation date
+  createdAt?: Timestamp | FieldValue | null; // Allow both Timestamp and FieldValue
+  updatedAt?: Timestamp | FieldValue | null; // Allow both Timestamp and FieldValue
+  status: boolean;
+  trash: boolean;
 }
 
 // create fireStore database
