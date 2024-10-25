@@ -10,7 +10,7 @@ import check from "@/public/check.png";
 import live from "@/public/live.png";
 import { createAPost } from "@/firebase/models";
 import { serverTimestamp } from "firebase/firestore";
-import { uploadFileToStorage } from "@/firebase/fileData";
+import { uploadFileToStorage } from "@/firebase/fileData.js";
 
 // Define the type for the toggleModal prop
 interface PostPopUpProps {

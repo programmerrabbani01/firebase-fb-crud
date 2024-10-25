@@ -12,6 +12,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 import { fireBaseApp } from "./app.js";
 
 // create fireStore database
@@ -68,15 +69,30 @@ export const getASinglePost = async (colName, id) => {
 
 /**
  * Delete A Single post Data From FireStore Database
+ * include image deletion
  */
 
-export const getDeleteAPost = async (colName, id) => {
-  // // delete a single post data
-  // const deleteAPost = await deleteDoc(doc(database, colName, id));
-
-  // //   return post data
-  // return deleteAPost.data();
+export const getDeleteAPost = async (
+  colName,
+  id,
+  imagePath = string | null
+) => {
   const docRef = doc(database, colName, id);
+
+  // If imagePath exists, delete the image from Firebase Storage
+  if (imagePath) {
+    const storage = getStorage();
+    const imageRef = ref(storage, imagePath);
+    await deleteObject(imageRef)
+      .then(() => {
+        console.log("Image deleted successfully");
+      })
+      .catch((error) => {
+        console.error("Error deleting image:", error);
+      });
+  }
+
+  // Delete the post document
   await deleteDoc(docRef);
 };
 

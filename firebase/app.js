@@ -3,13 +3,13 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDJ24QTkI2160N0n4DrW6uZIKtnM-XMhVo",
-  authDomain: "facebook-and-crud.firebaseapp.com",
-  projectId: "facebook-and-crud",
-  storageBucket: "facebook-and-crud.appspot.com",
-  messagingSenderId: "914145077149",
-  appId: "1:914145077149:web:0b3250000051a92f0d3174",
+  apiKey: "AIzaSyA7Xe8UeD-xfPdRolthdDoYBRkpA2udrdo",
+  authDomain: "facebook-timeline-f23b8.firebaseapp.com",
+  projectId: "facebook-timeline-f23b8",
+  storageBucket: "facebook-timeline-f23b8.appspot.com",
+  messagingSenderId: "1029709346056",
+  appId: "1:1029709346056:web:5aefbb7b1da61b9a05a8bd",
 };
 
-// Export Initialize Firebase
+// Initialize Firebase
 export const fireBaseApp = initializeApp(firebaseConfig);

@@ -30,9 +30,10 @@ export default function PostContent() {
   };
 
   // delete a post from firebase and remove from UI
-  const handleMoveToTrash = async (id: string) => {
+
+  const handleMoveToTrash = async (id: string, imagePath?: string | null) => {
     try {
-      await getDeleteAPost("posts", id); // Call the delete function
+      await getDeleteAPost("posts", id, imagePath);
       setPosts(posts.filter((post) => post.id !== id)); // Remove from UI
       setShowMenu(false); // Close the menu after deletion
 
@@ -40,18 +41,18 @@ export default function PostContent() {
       Swal.fire({
         icon: "success",
         title: "Deleted!",
-        text: "The post has been deleted successfully.",
+        text: "The post and its image have been deleted successfully.",
         timer: 2000, // Auto-close after 2 seconds
         showConfirmButton: false,
       });
     } catch (error) {
-      console.error("Error deleting post:", error);
+      console.error("Error deleting post or image:", error);
 
       // Show SweetAlert error message if deletion fails
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Something went wrong! Could not delete the post.",
+        text: "Something went wrong! Could not delete the post or image.",
       });
     }
   };
@@ -134,7 +135,9 @@ export default function PostContent() {
                             Edit Post
                           </li>
                           <li
-                            onClick={() => handleMoveToTrash(post.id)}
+                            onClick={() =>
+                              handleMoveToTrash(post.id, post.photo)
+                            }
                             className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
                           >
                             <IconTrash stroke={2} className="w-5 h-5" />
