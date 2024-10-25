@@ -14,13 +14,14 @@ import {
   deleteFileFromStorage,
   uploadFileToStorage,
 } from "@/firebase/fileData.js";
+import { serverTimestamp } from "firebase/firestore";
 
 // Define the Post type
 interface Post {
   id: string;
   content: string;
   photo?: string; // Photo is optional
-  // Add other fields if necessary, e.g., author, timestamp, etc.
+  updatedAt?: any;
 }
 
 // Define the type for the post and toggleModal props
@@ -113,6 +114,7 @@ export default function EditPost({
         id: post?.id as string, // Ensure the id is always a string
         content: input.content,
         photo: newFileUrl ?? undefined, // Ensure that photo is either a string or undefined
+        updatedAt: serverTimestamp(),
       };
 
       // Update the post in Firestore
@@ -253,7 +255,7 @@ export default function EditPost({
                 className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
                 onClick={handleUpdatePost}
               >
-                Save
+                Update
               </button>
             </div>
           </div>
