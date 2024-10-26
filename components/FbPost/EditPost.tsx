@@ -14,14 +14,14 @@ import {
   deleteFileFromStorage,
   uploadFileToStorage,
 } from "@/firebase/fileData.js";
-import { serverTimestamp } from "firebase/firestore";
+import { FieldValue, serverTimestamp } from "firebase/firestore";
 
 // Define the Post type
 interface Post {
   id: string;
   content: string;
   photo?: string; // Photo is optional
-  updatedAt?: any;
+  updatedAt?: FieldValue | null;
 }
 
 // Define the type for the post and toggleModal props
@@ -195,9 +195,11 @@ export default function EditPost({
             {/* File preview */}
             {filePreview && (
               <div className="mt-4">
-                <img
+                <Image
                   src={filePreview}
                   alt="Preview"
+                  width={400}
+                  height={256} // Adjust dimensions as needed
                   className="w-full h-64 object-cover rounded-lg"
                 />
                 <button

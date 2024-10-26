@@ -157,9 +157,11 @@ export default function PostPopUp({ toggleModal }: PostPopUpProps) {
             {/* File preview */}
             {filePreview && (
               <div className="mt-4">
-                <img
+                <Image
                   src={filePreview}
                   alt="Preview"
+                  width={400}
+                  height={256} // Adjust dimensions as needed
                   className="w-full h-64 object-cover rounded-lg"
                 />
                 <button

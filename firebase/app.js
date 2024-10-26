@@ -3,12 +3,12 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyD3lwlss0ZNbhAZfIpO81ssgmOTnDdPRgc",
-  authDomain: "mern-stack-c07bc.firebaseapp.com",
-  projectId: "mern-stack-c07bc",
-  storageBucket: "mern-stack-c07bc.appspot.com",
-  messagingSenderId: "62200976910",
-  appId: "1:62200976910:web:572c8bc2c55793702b4e5f",
+  apiKey: "AIzaSyA7JZKjiOJWNH4y-MroU7hgTLBIvncLMIg",
+  authDomain: "mern-stack-2515c.firebaseapp.com",
+  projectId: "mern-stack-2515c",
+  storageBucket: "mern-stack-2515c.appspot.com",
+  messagingSenderId: "348093034379",
+  appId: "1:348093034379:web:103711dd6078473c12098e",
 };
 
 // Initialize Firebase

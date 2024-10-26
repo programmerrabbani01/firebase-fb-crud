@@ -1,7 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // output: "export",
+
   images: {
-    domains: ["firebasestorage.googleapis.com"], // Ensures Firebase images load correctly
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com",
+        pathname: "/**", // Adjust this if you need to restrict to specific paths
+      },
+    ],
   },
 };
 
