@@ -19,13 +19,12 @@ import { fireBaseApp } from "./app.js";
 import { Timestamp } from "firebase/firestore"; // Import the Timestamp type from Firestore
 
 export interface Post {
-  id: string; // Post ID
-  content: string; // Content of the post
-  photo?: string; // Optional property for the image path
-  createdAt?: Timestamp | FieldValue | null; // Allow both Timestamp and FieldValue
-  updatedAt?: Timestamp | FieldValue | null; // Allow both Timestamp and FieldValue
-  status: boolean;
-  trash: boolean;
+  id: string;
+  content: string;
+  photo?: string;
+  createdAt?: Timestamp | FieldValue | null; // Allow FieldValue and null
+  status?: boolean; // Change this to boolean if you need it as such
+  trash?: boolean; // Optional properties
 }
 
 // create fireStore database
@@ -55,20 +54,25 @@ export const getAllPosts = async (colName: string): Promise<Post[]> => {
  * Realtime Data Get
  */
 
-export const getAllPostsRealTime = async (
+export const getAllPostsRealTime = (
   colName: string,
-  updateState: (posts: Post[]) => void
+  updateState: (posts: Post[]) => void // This should remain as a function type
 ) => {
-  onSnapshot(
+  const unsubscribe = onSnapshot(
     query(collection(database, colName), orderBy("createdAt", "desc")),
     (snapShot) => {
       const postsDataList: Post[] = [];
-      snapShot.docs.forEach((post) => {
-        postsDataList.push({ ...post.data(), id: post.id } as Post);
+      snapShot.docs.forEach((doc) => {
+        postsDataList.push({ ...doc.data(), id: doc.id } as Post);
       });
       updateState(postsDataList);
+    },
+    (error) => {
+      console.error("Error fetching posts:", error);
     }
   );
+
+  return unsubscribe; // Return the unsubscribe function
 };
 
 /**
@@ -139,10 +143,14 @@ export const createAPost = async (
  */
 
 export const updateAPost = async (
-  colName: string,
+  collection: string,
   id: string,
-  data: Partial<Post>
-) => {
-  // Update a post
-  await updateDoc(doc(database, colName, id), data);
+  data: Partial<Post & { photo: string | null }>
+): Promise<void> => {
+  try {
+    await updateDoc(doc(database, collection, id), data);
+  } catch (error) {
+    console.error("Error updating post:", error);
+    throw new Error("Failed to update post");
+  }
 };

@@ -14,23 +14,31 @@ import {
   deleteFileFromStorage,
   uploadFileToStorage,
 } from "@/firebase/fileData.js";
-import { FieldValue, serverTimestamp } from "firebase/firestore";
+import { FieldValue, serverTimestamp, Timestamp } from "firebase/firestore";
 
 // Define the Post type
-interface Post {
+// interface Post {
+//   id: string;
+//   content: string;
+//   photo?: string | null; // Photo is optional
+//   updatedAt?: FieldValue | null;
+// }
+export interface Post {
   id: string;
   content: string;
-  photo?: string; // Photo is optional
-  updatedAt?: FieldValue | null;
+  photo?: string; // Changed from string | null to string | undefined
+  createdAt?: Timestamp | FieldValue | null;
+  updatedAt?: Timestamp | FieldValue | null;
+  status?: boolean;
+  trash?: boolean;
 }
 
 // Define the type for the post and toggleModal props
 interface EditPostProps {
   toggleEditModal: () => void;
-  post: Post | null; // Post object passed from parent
+  post: Post | null; // Ensure this matches
   setPosts: React.Dispatch<React.SetStateAction<Post[]>>;
 }
-
 export default function EditPost({
   toggleEditModal,
   post,
@@ -94,32 +102,93 @@ export default function EditPost({
 
   // Handle saving the updated post
 
+  // const handleUpdatePost = async () => {
+  //   try {
+  //     let newFileUrl: string | null = null; // Initialize with null
+
+  //     // If a new file is uploaded, handle the file upload
+  //     if (file) {
+  //       // If there was a previous photo, delete it
+  //       if (post?.photo) {
+  //         await deleteFileFromStorage(post.photo);
+  //       }
+  //       newFileUrl = await uploadFileToStorage(file);
+  //     } else if (!file && filePreview === null && post?.photo) {
+  //       // If no file is selected and preview is null, delete existing photo
+  //       await deleteFileFromStorage(post.photo);
+  //       newFileUrl = null; // Set photo to null for Firestore
+  //     } else {
+  //       // Retain existing photo if no new file is uploaded
+  //       newFileUrl = post?.photo ?? null;
+  //     }
+
+  //     // Prepare updated data, ensuring photo can be null
+  //     const updatedData: Partial<Post> = {
+  //       content: input.content.trim() ? input.content : "",
+  //       photo: newFileUrl, // This can be a string or null
+  //       updatedAt: serverTimestamp(),
+  //     };
+
+  //     // Update the post in Firestore
+  //     if (post?.id) {
+  //       await updateAPost("posts", post.id, updatedData as Partial<Post>); // Cast as Partial<Post> if needed
+  //     }
+
+  //     // Update the UI with new post content
+  //     setPosts((prevPosts) =>
+  //       prevPosts.map((p) => (p.id === post?.id ? { ...p, ...updatedData } : p))
+  //     );
+
+  //     Swal.fire({
+  //       icon: "success",
+  //       title: "Updated!",
+  //       text: "The post has been updated successfully.",
+  //       timer: 2000,
+  //       showConfirmButton: false,
+  //     });
+
+  //     toggleEditModal(); // Close the modal after saving
+  //   } catch (error) {
+  //     console.error("Error updating post:", error);
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Error!",
+  //       text: "Something went wrong while updating the post.",
+  //     });
+  //   }
+  // };
+
   const handleUpdatePost = async () => {
     try {
-      let newFileUrl = post?.photo || null; // Start with existing photo
+      let newFileUrl: string | null = null; // Initialize with null
 
       // If a new file is uploaded, handle the file upload
       if (file) {
         // If there was a previous photo, delete it
         if (post?.photo) {
-          await deleteFileFromStorage(post.photo); // Delete the old file from Firebase Storage
+          await deleteFileFromStorage(post.photo);
         }
-
-        // Upload the new file
-        newFileUrl = await uploadFileToStorage(file); // Upload the new file and get the URL
+        newFileUrl = await uploadFileToStorage(file);
+      } else if (!file && filePreview === null && post?.photo) {
+        // If no file is selected and preview is null, delete existing photo
+        await deleteFileFromStorage(post.photo);
+        newFileUrl = null; // Set photo to null for Firestore
+      } else {
+        // Retain existing photo if no new file is uploaded
+        newFileUrl = post?.photo ?? null;
       }
 
-      // Prepare updated data
-      const updatedData: Post = {
-        id: post?.id as string, // Ensure the id is always a string
-        content: input.content,
-        photo: newFileUrl ?? undefined, // Ensure that photo is either a string or undefined
+      // Prepare updated data, ensuring photo can be null
+      // Prepare updated data, ensuring photo can be null
+      const updatedData: Partial<Post> = {
+        content: input.content.trim() ? input.content : "",
+        photo: newFileUrl || "", // Provide an empty string if newFileUrl is null
         updatedAt: serverTimestamp(),
       };
 
       // Update the post in Firestore
       if (post?.id) {
-        await updateAPost("posts", post.id, updatedData);
+        await updateAPost("posts", post.id, updatedData); // No cast needed
       }
 
       // Update the UI with new post content

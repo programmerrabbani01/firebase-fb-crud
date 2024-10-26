@@ -11,11 +11,14 @@ import { FieldValue, Timestamp } from "firebase/firestore";
 import { getAllPostsRealTime, getDeleteAPost } from "@/firebase/models.ts";
 
 // Define the shape of a post
-interface Post {
+// Define the shape of a post
+export interface Post {
   id: string;
   content: string;
   photo?: string;
-  createdAt?: Timestamp | FieldValue | null; // Allow FieldValue and null
+  createdAt?: Timestamp | FieldValue | null;
+  status?: boolean; // Change this to boolean
+  trash?: boolean;
 }
 
 export default function PostContent() {
@@ -59,12 +62,19 @@ export default function PostContent() {
 
   //   get all posts data
 
-  const getAllPostsData = async () => {
-    await getAllPostsRealTime("posts", setPosts);
-  };
+  // const getAllPostsData = async () => {
+  //   await getAllPostsRealTime("posts", setPosts);
+  // };
 
+  // Call the getAllPostsRealTime function with an arrow function
   useEffect(() => {
-    getAllPostsData();
+    const unsubscribe = getAllPostsRealTime("posts", (posts: Post[]) => {
+      setPosts(posts);
+    });
+
+    return () => {
+      unsubscribe(); // Clean up listener on unmount
+    };
   }, []);
 
   // Toggles the modal

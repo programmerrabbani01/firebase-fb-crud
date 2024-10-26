@@ -8,13 +8,24 @@ import photoVideo from "@/public/photoVideo.png";
 import tag from "@/public/tag.png";
 import check from "@/public/check.png";
 import live from "@/public/live.png";
-import { createAPost, Post } from "@/firebase/models.ts";
-import { serverTimestamp } from "firebase/firestore";
+import { createAPost } from "@/firebase/models.ts";
+import { FieldValue, serverTimestamp } from "firebase/firestore";
 import { uploadFileToStorage } from "@/firebase/fileData.js";
 
 // Define the type for the toggleModal prop
 interface PostPopUpProps {
   toggleModal: () => void;
+}
+
+// Assuming the Post interface looks like this
+export interface Post {
+  id: string;
+  content: string;
+  photo?: string; // Change this to only allow string or undefined
+  createdAt: FieldValue;
+  updatedAt: FieldValue | null;
+  status: boolean;
+  trash: boolean;
 }
 
 export default function PostPopUp({ toggleModal }: PostPopUpProps) {
@@ -54,25 +65,63 @@ export default function PostPopUp({ toggleModal }: PostPopUpProps) {
   };
 
   // Submit form
+  // const handleFormCreate = async () => {
+  //   try {
+  //     let fileLink: string | null = null; // Initialize fileLink
+
+  //     if (file) {
+  //       fileLink = await uploadFileToStorage(file); // Upload file if present
+  //     }
+
+  //     // create a post with photo as null if no file is uploaded
+  //     await createAPost("posts", {
+  //       ...input,
+  //       status: true,
+  //       trash: false,
+  //       createdAt: serverTimestamp(),
+  //       updatedAt: null,
+  //       photo: fileLink, // This will be null if no file is selected
+  //     } as Post);
+
+  //     // Reset form
+  //     setInput({
+  //       content: "",
+  //     });
+  //     setFile(null);
+  //     setFilePreview(null);
+
+  //     // Close the modal after successful submission
+  //     toggleModal();
+  //   } catch (error) {
+  //     console.error("Error creating post:", error);
+  //     // Optionally handle the error, e.g., show a notification
+  //   }
+  // };
+
+  // Submit form
   const handleFormCreate = async () => {
-    if (!file) {
-      // Handle the case where no file is selected (optional)
-      console.warn("No file selected");
-      return; // Or show an error message
-    }
-
     try {
-      const fileLink = await uploadFileToStorage(file); // Ensure `uploadFile` accepts a `File`
+      let fileLink: string | undefined; // Initialize fileLink as undefined
 
-      // create a post
-      await createAPost("posts", {
-        ...input,
+      if (file) {
+        fileLink = await uploadFileToStorage(file); // Upload file if present
+      } else {
+        fileLink = undefined; // Explicitly set to undefined if no file
+      }
+
+      // Create a post object with a temporary ID
+      const newPost: Post = {
+        id: "", // Temporary ID or you can use a generated unique ID
+        content: input.content,
         status: true,
         trash: false,
         createdAt: serverTimestamp(),
         updatedAt: null,
-        photo: fileLink,
-      } as Post);
+        photo: fileLink, // This will be undefined if no file is selected
+      };
+
+      // Pass newPost to createAPost
+      await createAPost("posts", newPost); // Pass newPost with temporary id
 
       // Reset form
       setInput({
